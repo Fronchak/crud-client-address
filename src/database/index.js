@@ -1,10 +1,10 @@
-import Sequelize from 'sequelize';
-import config from '../config/database.js';
-import Client from '../models/ClientModel.js';
+const Sequelize = require('sequelize');
+const config = require('../config/database.js');
+const Client = require('../models/ClientModel.js');
 
 const connection = new Sequelize(config);
 Client.init(connection);
-testConnection();
+//testConnection();
 async function testConnection() {
   try {
     await connection.authenticate();
@@ -13,10 +13,8 @@ async function testConnection() {
     console.error('Unable to connect to the database:', error);
   }
 }
-
-
-//Client.init(connection);
-
+/*
 connection.sync({ alter: true })
   .then(() => console.log('tabela criada'))
   .catch(e => console.log(e));
+*/

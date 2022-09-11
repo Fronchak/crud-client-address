@@ -1,5 +1,5 @@
-import express from 'express';
-import controller from '../controllers/ClientController.js';
+const express = require('express');
+const controller = require('../controllers/ClientController.js');
 
 const Router = express.Router;
 
@@ -13,4 +13,4 @@ router.get('/delete/:id', controller.getDelete);
 router.post('/delete/:id', controller.delete);
 router.get('/:id', controller.show);
 
-export default router;
+module.exports = router;

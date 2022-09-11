@@ -1,21 +1,54 @@
-import dotenv from 'dotenv';
-import express from 'express';
-import { resolve } from 'path';
-import clientRouter from './src/routes/clientRoutes.js';
-import './src/database/index.js';
+const dotenv = require('dotenv');
+const express = require('express');
+const path = require('path');
+const createError = require('http-errors');
+const messageMiddleware = require('./src/middlewares/messagesMiddleware');
+const clientRouter = require('./src/routes/clientRoutes');
+const homeRouter = require('./src/routes/homeRoutes');
+require ('./src/database/index');
 
 dotenv.config();
 
 class App {
   constructor() {
+    console.log(__dirname)
     this.app = express();
+    this.config();
+    this.middlewares();
     this.routes();
+    this.errors();
+  }
+
+  config() {
+    this.app.set('views', path.resolve(__dirname, 'src', 'views'));
+    this.app.set('view engine', 'ejs');
+    this.app.use(express.json());
+    this.app.use(express.urlencoded({ extended: true }));
+    this.app.use(express.static(path.resolve(__dirname, 'src', 'public')));
+  }
+
+  middlewares() {
+    this.app.use(messageMiddleware);
   }
 
   routes() {
+    this.app.use('/', homeRouter);
     this.app.use('/clients', clientRouter);
+  }
+
+  errors() {
+    this.app.use(function(req, res, next) {
+      if (res.locals.err) return next(res.locals.err);
+      next(createError(404));
+    });
+
+    this.app.use(function(err, req, res, next) {
+      res.render('error', {
+        error: err
+      });
+    });
   }
 }
 
-export default new App().app;
+module.exports = new App().app;
 

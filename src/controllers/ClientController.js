@@ -5,7 +5,8 @@ class ClientController {
   }
 
   getStore(req, res, next) {
-    res.send('getStore');
+    res.locals.title = 'Client';
+    res.render('client/clientForm');
   }
 
   store(req, res, next) {
@@ -34,4 +35,4 @@ class ClientController {
 
 }
 
-export default new ClientController();
+module.exports = new ClientController();

@@ -1,8 +1,8 @@
-import dotenv from 'dotenv';
+const dotenv = require('dotenv');
 
 dotenv.config();
 
-export default {
+module.exports = {
   dialect: process.env.DATABASE_DIALECT,
   host: process.env.DATABASE_HOST,
   port: process.env.DATABASE_PORT,
