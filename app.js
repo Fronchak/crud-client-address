@@ -2,7 +2,7 @@ const dotenv = require('dotenv');
 const express = require('express');
 const path = require('path');
 const createError = require('http-errors');
-const messageMiddleware = require('./src/middlewares/messagesMiddleware');
+const {globalMiddleware, clientFormMiddleware} = require('./src/middlewares/middleware');
 const clientRouter = require('./src/routes/clientRoutes');
 const homeRouter = require('./src/routes/homeRoutes');
 require ('./src/database/index');
@@ -28,7 +28,8 @@ class App {
   }
 
   middlewares() {
-    this.app.use(messageMiddleware);
+    this.app.use(globalMiddleware);
+    this.app.use('/clients', clientFormMiddleware);
   }
 
   routes() {
@@ -37,7 +38,7 @@ class App {
   }
 
   errors() {
-    this.app.use(function(req, res, next) {
+    this.app.use(function(err, req, res, next) {
       if (res.locals.err) return next(res.locals.err);
       next(createError(404));
     });
