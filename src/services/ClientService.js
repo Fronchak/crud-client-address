@@ -3,12 +3,13 @@ const constants = require('../util/constants');
 
 class ClientService {
 
-  async save(client) {
+  save = async (client) => {
     return await Client.create(client);
   }
 
-  getClientPage = (client) => `${constants.clientMainUrlPage}${client.id}`;
-
+  async findById(id) {
+    return await Client.findByPk(id);
+  }
 }
 
 module.exports = new ClientService();

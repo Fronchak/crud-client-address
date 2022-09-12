@@ -19,9 +19,10 @@ class ClientController {
 
   store = async (req, res, next) => {
     const client = this.createClientFromReq(req);
+    console.log(client);
     try {
       const clientCreated = await service.save(client);
-      res.redirect(service.getClientPage(clientCreated));
+      res.redirect(clientCreated.urlPage);
     }
     catch (e) {
       next(e);
@@ -43,8 +44,28 @@ class ClientController {
     }
   }
 
-  show(req, res, next) {
-    res.send('show');
+  show = async (req, res, next) => {
+    try {
+      const clientObj = await service.findById(req.params.id);
+      if (!clientObj) return this.handleClientNotFound();
+      this.renderClientPage(clientObj, res);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  handleClientNotFound() {
+    const err = new Error('Client not found.');
+    err.status = 404;
+    res.locals.err = err;
+    next();
+  }
+
+  renderClientPage(clientObj, res) {
+    res.locals.title = 'Client Personal Page'
+    res.render('client/clientPage', {
+      clientObj
+    });
   }
 
   getUpdate(req, res, next) {
