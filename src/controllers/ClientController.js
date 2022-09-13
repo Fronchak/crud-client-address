@@ -3,8 +3,17 @@ const service = require('../services/ClientService');
 
 class ClientController {
 
-  index(req, res, next) {
-    res.send('controller');
+  index = async (req, res, next) => {
+    try {
+      const clients = await service.findAll();
+      res.locals.title = 'All Clients';
+      res.render('client/clientList', {
+        clients: clients
+      });
+    } 
+    catch (e) {
+      next(e);
+    }
   }
 
   getStore = (req, res) => {

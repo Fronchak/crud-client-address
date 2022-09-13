@@ -1,0 +1,11 @@
+<h3><strong>Status: </strong>
+<% if (clientObj.status === 'Bronze') { %>
+  <span class="text-danger">Bronze</span>
+<% } else if (clientObj.status === 'Silver') { %>
+  <span class="text-secondary">Silver</span>
+<% } else if (clientObj.status === 'Gold') { %>
+  <span class="text-warning">Gold</span>
+<% } else if (clientObj.status === 'Diamond') { %>
+  <span class="text-primary">Diamond</span>
+<% } %>
+</h3>

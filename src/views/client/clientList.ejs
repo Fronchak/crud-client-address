@@ -1,0 +1,20 @@
+<%- include('../includes/fullHead'); %>
+ <% for(const clientObj of clients) { %>
+  <h3><strong>Name: </strong>
+    <a href=<%= clientObj.urlPage %>><%= clientObj.fullName %></a>
+  </h3>
+  <h3><strong>Email: </strong><%= clientObj.email %></h3>
+  <h3><strong>Status: </strong>
+   <% if (clientObj.status === 'Bronze') { %>
+    <span class="text-danger">Bronze</span>
+   <% } else if (clientObj.status === 'Silver') { %>
+    <span class="text-secondary">Silver</span>
+   <% } else if (clientObj.status === 'Gold') { %>
+    <span class="text-warning">Gold</span>
+   <% } else if (clientObj.status === 'Diamond') { %>
+    <span class="text-primary">Diamond</span>
+   <% } %>
+  </h3>
+  <hr>
+ <% } %>
+<%- include('../includes/footer'); %>

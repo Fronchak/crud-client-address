@@ -10,6 +10,10 @@ class ClientService {
   async findById(id) {
     return await Client.findByPk(id);
   }
+
+  async findAll() {
+    return await Client.findAll();
+  }
 }
 
 module.exports = new ClientService();

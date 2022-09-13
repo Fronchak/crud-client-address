@@ -1,18 +1,7 @@
 <%- include('../includes/fullHead'); %>
-  <h3><strong>Name: </strong><%= clientObj.fullName %></h3>
-  <h3><strong>Email: </strong><%= clientObj.email %></h3>
+  <%- include('./clientNameEmail'); %>
   <h3><strong>Birth Date: </strong><%= clientObj.birthDateFormatted %></h3>
-  <h3><strong>Status: </strong>
-    <% if (clientObj.status === 'Bronze') { %>
-      <span class="text-danger">Bronze</span>
-    <% } else if (clientObj.status === 'Silver') { %>
-      <span class="text-secondary">Silver</span>
-    <% } else if (clientObj.status === 'Gold') { %>
-      <span class="text-warning">Gold</span>
-    <% } else if (clientObj.status === 'Diamond') { %>
-      <span class="text-primary">Diamond</span>
-    <% } %>
-  </h3>
+  <%- include('./clientStatus'); %>
   <div class="mt-3">
     <button type="button" class="btn btn-primary">
       <a class="nav-link active" aria-current="page" href=<%= clientObj.urlUpdatePage %>>Update</a>
