@@ -14,6 +14,14 @@ class ClientService {
   async findAll() {
     return await Client.findAll();
   }
+
+  async update(client) {
+    return await client.save();
+  }
+
+  async delete(client) {
+    return await client.destroy()
+  }
 }
 
 module.exports = new ClientService();

@@ -56,14 +56,14 @@ class ClientController {
   show = async (req, res, next) => {
     try {
       const clientObj = await service.findById(req.params.id);
-      if (!clientObj) return this.handleClientNotFound();
+      if (!clientObj) return this.handleClientNotFound(res);
       this.renderClientPage(clientObj, res);
     } catch (e) {
       next(e);
     }
   }
 
-  handleClientNotFound() {
+  handleClientNotFound(res) {
     const err = new Error('Client not found.');
     err.status = 404;
     res.locals.err = err;
@@ -77,20 +77,73 @@ class ClientController {
     });
   }
 
-  getUpdate(req, res, next) {
-    res.send('getUpdate');
+  getUpdate = async (req, res, next) => {
+    try {
+      const client = await service.findById(req.params.id);
+      if (!client) return this.handleClientNotFound(res);
+      this.renderUpdateForm(res, client);
+    }
+    catch (e) {
+      next(e);
+    }
   }
 
-  update(req, res, next) {
-    res.send('update');
+  renderUpdateForm(res, client) {
+    res.locals.title = 'Update Client';
+    res.locals.clientObj = client;
+    res.render('client/clientForm');
   }
 
-  getDelete(req, res, next) {
-    res.send('getDelete');
+  update = async(req, res, next) => {
+    try {
+      const client = await service.findById(req.params.id);
+      if (!client) return this.handleClientNotFound(res);
+      this.updateClientByReq(client, req);
+      const updatedClient = await service.update(client);
+      this.renderClientPage(updatedClient, res);
+    } 
+    catch (e) {
+      next(e);
+    }
   }
 
-  delete(req, res, next) {
-    res.send('delete');
+  updateClientByReq(client, req) {
+    const body = req.body;
+    client.firstName = body.first_name;
+    client.lastName = body.last_name;
+    client.email = body.email;
+    client.birthDate = parseDateToUTC(body.birth_date);
+    client.status = body.status;
+  }
+
+  getDelete = async (req, res, next) => {
+    try {
+      const client = await service.findById(req.params.id);
+      if (!client) return this.handleClientNotFound(res);
+      this.renderDeletePage(client, res);
+    }
+    catch (e) {
+      next(e);
+    }
+  }
+
+  renderDeletePage(client, res) {
+    res.locals.title = "Confirm Delete";
+    res.locals.clientObj = client;
+    res.render('client/clientDeletePage');
+  }
+
+  delete = async (req, res, next) => {
+    try {
+      const client = await service.findById(req.params.id);
+      if (!client) return this.handleClientNotFound(res);
+      const rows = await service.delete(client);
+      console.log('rows', rows.toJSON());
+      res.redirect('/clients');
+    }
+    catch (e) {
+      next(e);
+    }
   }
 
 }
