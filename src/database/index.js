@@ -13,8 +13,8 @@ async function testConnection() {
     console.error('Unable to connect to the database:', error);
   }
 }
-/*
+
 connection.sync({ alter: true })
   .then(() => console.log('tabela criada'))
   .catch(e => console.log(e));
-*/
+

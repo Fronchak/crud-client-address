@@ -1,5 +1,6 @@
 const parseDateToUTC = require('../util/parseDateToUTC');
 const service = require('../services/ClientService');
+const getErrors = require('../util/getArrayOfErrorsMessage');
 
 class ClientController {
 
@@ -20,26 +21,41 @@ class ClientController {
     this.renderCreateForm(res);
   }
 
-  renderCreateForm(res) {
+  renderCreateForm(res, client = {}) {
     res.locals.title = 'Client';
-    res.locals.description = 'Fill the form to add new client'
+    res.locals.description = 'Fill the form to add new client';
+    res.locals.clientObj = client;
     res.render('client/clientForm');
   }
 
   store = async (req, res, next) => {
     const client = this.createClientFromReq(req);
-    console.log(client);
     try {
       const clientCreated = await service.save(client);
       res.redirect(clientCreated.urlPage);
     }
     catch (e) {
-      next(e);
+      return this.handleCreateError(e, res, next, client);
     }
   }
 
-  handleCreateError(e) {
-    //if (e.name === '') 
+  handleCreateError = (e, res, next, client) => {
+    if (e.name === 'SequelizeValidationError' || e.name === 'SequelizeUniqueConstraintError')
+       return this.handleValidationErrorAtCreation(e, res, client);
+    this.handleUndefinedError(e, res, next);
+  }
+
+  handleValidationErrorAtCreation(e, res, client) {
+    res.locals.errors = getErrors(e);
+    this.renderCreateForm(res, client);
+  }
+
+  handleUndefinedError(e, res, next) {
+    console.log('undefined error');
+    const err = new Error(e.message);
+    err.status = 404;
+    res.locals.err = err;
+    next(e);
   }
 
   createClientFromReq(req) {

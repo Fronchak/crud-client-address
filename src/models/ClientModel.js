@@ -7,22 +7,58 @@ module.exports = class Client extends Model {
     super.init({
       firstName: {
         type: DataTypes.STRING,
-        defaultValue: ''
+        allowNull: false,
+        defaultValue: '',
+        validate: {
+          len: {
+            args: [2, 40],
+            msg: 'First name must have at least 2 letters and less than 40 letters'
+          },
+          isAlpha: {
+            msg: 'First name must only contains letters'
+          }
+        }
       },
       lastName: {
         type: DataTypes.STRING,
-        defaultValue: ''
+        defaultValue: '',
+        allowNull: false,
+        validate: {
+          len: {
+            args: [2, 40],
+            msg: 'Last name must have at least 2 letters and less than 40 letters'
+          }
+        },
       },
       email: {
         type: DataTypes.STRING,
-        defaultValue: ''
+        defaultValue: '',
+        unique: true,
+        validate: {
+          isEmail: {
+            msg: 'Invalid email format'
+          }
+        }
       },
       birthDate: {
-        type: DataTypes.DATE
+        type: DataTypes.DATE,
+        allowNull: false,
+        validate: {
+          isDate: {
+            msg: 'Invalid date format'
+          }
+        }
       },
       status: {
         type: DataTypes.ENUM,
-        values: constants.myStatus
+        values: constants.myStatus,
+        allowNull: false,
+        validate: {
+          isIn: {
+            args: [constants.myStatus],
+            msg: `Invalid value for client's status`
+          }
+        }
       },
       urlPage: {
         type: DataTypes.VIRTUAL,
