@@ -44,9 +44,15 @@ class AddressController {
   store = async(req, res, next) => {
     let address;
     try {
-      const client = await clientService.findById(req.body.client);
+      const client = await clientService.findByIdWithAddress(req.body.client);
       if (!client) return this.handleClientNotFound(res);
       address = this.getAddressFromReq(req);
+      if (client.Address) {
+        const clients = await clientService.findAll();
+        this.handleTest(res, clients, address);
+        return;
+      }
+
       const createdAddress = await addressService.save(address);
       res.redirect(createdAddress.urlPage);
     }
@@ -64,6 +70,11 @@ class AddressController {
 
   handleClientNotFound = (res) => {
     clientController.handleClientNotFound(res);
+  }
+
+  handleTest = (res, clients, address) => {
+    res.locals.errors.push('Client already has an address.')
+    this.renderAddForm(res, clients, address);
   }
 
   getAddressFromReq(req) {

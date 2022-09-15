@@ -79,7 +79,7 @@ class ClientController {
 
   show = async (req, res, next) => {
     try {
-      const clientObj = await service.findById(req.params.id);
+      const clientObj = await service.findByIdWithAddress(req.params.id);
       if (!clientObj) return this.handleClientNotFound(res);
       this.renderClientPage(clientObj, res);
     } catch (e) {
