@@ -28,6 +28,6 @@
         <% } %>
       </select>
     </div>
-    <button type="submit" class="btn btn-primary mt-3">Add</button>
+    <button type="submit" class="btn btn-primary mt-3"><%= (clientObj.id ? 'Update' : 'Add') %></button>
   </form>
 <%- include('../includes/footer'); %>

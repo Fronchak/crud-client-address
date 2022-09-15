@@ -1,4 +1,5 @@
 const Client = require('../models/ClientModel');
+const Address = require('../models/AddressModel');
 const constants = require('../util/constants');
 
 class ClientService {
@@ -9,6 +10,12 @@ class ClientService {
 
   async findById(id) {
     return await Client.findByPk(id);
+  }
+
+  async findByIdWithAddress(id) {
+    return await Client.findByPk(id, {
+      include: Address
+    });
   }
 
   async findAll() {

@@ -1,0 +1,32 @@
+<%- include('../includes/fullHead'); %>
+  <form method="post" action="">
+    <div class="form-group">
+      <label for="client">Client:</label>
+      <select id="client" class="form-control" name="client">
+        <% for (const client of clients) { %>
+          <option value=<%= client.id %>
+            <% if (address.ClientId == client.id) { %>
+              selected
+            <% } %>
+            ><%= `${client.fullName} - ${client.id}` %>
+          </option>
+        <% } %>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="city">City:</label>
+      <input type="text" class="form-control" id="city" aria-describedby="city" name="city" value=<%= address.city %>>
+    </div>
+    <div class="form-group">
+      <label for="street">Stret:</label>
+      <input type="text" class="form-control" id="street" aria-describedby="street" name="street" value=<%= address.street %> >
+    </div>
+    <div class="form-group">
+      <label for="number">Number:</label>
+      <input type="text" class="form-control" id="city" aria-describedby="number" name="number" value=<%= address.number %> >
+    </div>
+    <button type="submit" class="btn btn-primary mt-3">
+      <%= (address.Client ? 'Update' : 'Add') %>
+    </button>
+  </form>
+<%- include('../includes/footer'); %>

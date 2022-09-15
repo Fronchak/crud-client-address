@@ -21,18 +21,19 @@ module.exports = class Client extends Model {
       },
       lastName: {
         type: DataTypes.STRING,
-        defaultValue: '',
         allowNull: false,
+        defaultValue: '',
         validate: {
           len: {
             args: [2, 40],
             msg: 'Last name must have at least 2 letters and less than 40 letters'
           }
-        },
+        }
       },
       email: {
         type: DataTypes.STRING,
         defaultValue: '',
+        allowNull: false,
         unique: true,
         validate: {
           isEmail: {
@@ -94,5 +95,10 @@ module.exports = class Client extends Model {
       sequelize
     });
     return this;
+  }
+
+  static associate(models) {
+    this.hasOne(models.Address);
+    
   }
 }

@@ -1,9 +1,12 @@
 const Sequelize = require('sequelize');
 const config = require('../config/database.js');
 const Client = require('../models/ClientModel.js');
+const Address = require('../models/AddressModel.js');
 
 const connection = new Sequelize(config);
-Client.init(connection);
+const models = [Client, Address];
+models.forEach((model) => model.init(connection));
+models.forEach((model) => model.associate && model.associate(connection.models));
 //testConnection();
 async function testConnection() {
   try {

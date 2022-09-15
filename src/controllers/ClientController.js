@@ -51,7 +51,6 @@ class ClientController {
   }
 
   handleUndefinedError(e, res, next) {
-    console.log('undefined error');
     const err = new Error(e.message);
     err.status = 404;
     res.locals.err = err;
@@ -75,7 +74,7 @@ class ClientController {
       if (!clientObj) return this.handleClientNotFound(res);
       this.renderClientPage(clientObj, res);
     } catch (e) {
-      next(e);
+      this.handleUndefinedError(e, res, next);
     }
   }
 
@@ -100,7 +99,7 @@ class ClientController {
       this.renderUpdateForm(res, client);
     }
     catch (e) {
-      next(e);
+      this.handleUndefinedError(e, res, next);
     }
   }
 
@@ -111,16 +110,28 @@ class ClientController {
   }
 
   update = async(req, res, next) => {
+    let client;
     try {
-      const client = await service.findById(req.params.id);
+      client = await service.findById(req.params.id);
       if (!client) return this.handleClientNotFound(res);
       this.updateClientByReq(client, req);
       const updatedClient = await service.update(client);
       this.renderClientPage(updatedClient, res);
     } 
     catch (e) {
-      next(e);
+      this.handleUpdateError(e, res, next, client);
     }
+  }
+
+  handleUpdateError = (e, res, next, client) => {
+    if (e.name === 'SequelizeValidationError' || e.name === 'SequelizeUniqueConstraintError')
+      return this.handleValidationErrorAtUpdate(e, res, client);
+    this.handleUndefinedError(e, res, next);
+  }
+
+  handleValidationErrorAtUpdate(e, res, client) {
+    res.locals.errors = getErrors(e);
+    this.renderUpdateForm(res, client);
   }
 
   updateClientByReq(client, req) {

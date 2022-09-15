@@ -1,0 +1,6 @@
+<%- include('../includes/fullHead'); %>
+  <% for (const address of addresses) { %>
+    <a href=<%= address.urlPage %>><%= address.completeAddress %></a>
+    <hr>
+  <% } %>
+<%- include('../includes/footer'); %>
