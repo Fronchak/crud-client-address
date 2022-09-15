@@ -6,7 +6,16 @@ class ClientController {
 
   index = async (req, res, next) => {
     try {
-      const clients = await service.findAll();
+      const clients = await service.findAllWithAddress();
+      clients.forEach((client) => {
+        if (client.Address) {
+          //console.log(typeof client.Address)
+          ///console.log('------------------------------')
+          console.log(client.Address.dataValues);
+          console.log(client.Address.completeAddress);
+          console.log(1);
+        }
+      });
       res.locals.title = 'All Clients';
       res.render('client/clientList', {
         clients: clients
@@ -164,8 +173,7 @@ class ClientController {
     try {
       const client = await service.findById(req.params.id);
       if (!client) return this.handleClientNotFound(res);
-      const rows = await service.delete(client);
-      console.log('rows', rows.toJSON());
+      await service.delete(client);
       res.redirect('/clients');
     }
     catch (e) {

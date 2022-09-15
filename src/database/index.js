@@ -17,7 +17,7 @@ async function testConnection() {
   }
 }
 
-connection.sync({ alter: true })
-  .then(() => console.log('tabela criada'))
-  .catch(e => console.log(e));
+//connection.sync({ alter: true })
+//  .then(() => console.log('tabela criada'))
+//  .catch(e => console.log(e));
 

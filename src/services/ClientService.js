@@ -1,6 +1,5 @@
 const Client = require('../models/ClientModel');
 const Address = require('../models/AddressModel');
-const constants = require('../util/constants');
 
 class ClientService {
 
@@ -20,6 +19,12 @@ class ClientService {
 
   async findAll() {
     return await Client.findAll();
+  }
+
+  async findAllWithAddress() {
+    return await Client.findAll({
+      include: Address
+    });
   }
 
   async update(client) {

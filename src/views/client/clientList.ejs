@@ -15,6 +15,11 @@
     <span class="text-primary">Diamond</span>
    <% } %>
   </h3>
+  <% if (clientObj.Address) { %>
+    <h3><strong>Address: </strong>
+      <a href=<%= clientObj.Address.urlPage %>><%= clientObj.Address.completeAddress %></a>
+    </h3>
+  <% } %>
   <hr>
  <% } %>
 <%- include('../includes/footer'); %>
