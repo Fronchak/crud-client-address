@@ -6,6 +6,7 @@ const {globalMiddleware, clientFormMiddleware} = require('./src/middlewares/midd
 const clientRouter = require('./src/routes/clientRoutes');
 const homeRouter = require('./src/routes/homeRoutes');
 const addressRouter = require('./src/routes/addressRoutes');
+const categotyRoutes = require('./src/routes/categoryRoutes');
 require ('./src/database/index');
 
 dotenv.config();
@@ -37,6 +38,7 @@ class App {
     this.app.use('/', homeRouter);
     this.app.use('/clients', clientRouter);
     this.app.use('/address', addressRouter);
+    this.app.use('/categories', categotyRoutes);
   }
 
   errors() {

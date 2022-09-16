@@ -2,12 +2,14 @@ const Sequelize = require('sequelize');
 const config = require('../config/database.js');
 const Client = require('../models/ClientModel.js');
 const Address = require('../models/AddressModel.js');
+const Category = require('../models/CategoryModel');
 
 const connection = new Sequelize(config);
-const models = [Client, Address];
+const models = [Client, Address, Category];
 models.forEach((model) => model.init(connection));
 models.forEach((model) => model.associate && model.associate(connection.models));
 //testConnection();
+//updateTables();
 async function testConnection() {
   try {
     await connection.authenticate();
@@ -17,7 +19,12 @@ async function testConnection() {
   }
 }
 
-//connection.sync({ alter: true })
-//  .then(() => console.log('tabela criada'))
-//  .catch(e => console.log(e));
+function updateTables() {
+  connection.sync({ alter: true })
+      .then(() => console.log('tabela criada'))
+      .catch(e => console.log(e));
+}
+
+
+
 

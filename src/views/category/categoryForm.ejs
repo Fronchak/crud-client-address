@@ -1,0 +1,11 @@
+<%- include('../includes/fullHead'); %>
+<form method="post" action="">
+  <div class="form-group">
+    <label for="category">category:</label>
+    <input type="text" class="form-control" id="category" aria-describedby="category" name="category" value=<%= category.category %> >
+  </div>
+  <button type="submit" class="btn btn-primary mt-3">
+    Add
+  </button>
+</form>
+<%- include('../includes/footer'); %>
