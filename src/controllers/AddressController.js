@@ -1,7 +1,7 @@
 const clientService = require('../services/clientService');
 const clientController = require('./ClientController');
 const addressService = require('../services/AddressService');
-const getErrors = require('../util/getArrayOfErrorsMessage');
+const {isValidationError, handleUndefinedError, handleNotFound, getErrors} = require('./ControllerFunctions');
 
 class AddressController {
 
@@ -63,7 +63,7 @@ class AddressController {
         return this.handleCreateError(e, res, next, clients, address);
       }
       catch (e) {
-        return this.handleUndefinedError(e, res, next);
+        return handleUndefinedError(e, res, next);
       }
     }
   }
@@ -88,30 +88,23 @@ class AddressController {
   }
 
   handleCreateError = (e, res, next, clients, address) => {
-    if (this.isValidationError(e)) {
+    if (isValidationError(e)) {
       return this.handleValidationErrorAtCreation(e, res, clients, address);
     }
-    return this.handleUndefinedError(e, res, next);
+    return handleUndefinedError(e, res, next);
   }
 
-  isValidationError = (e) => (e.name === 'SequelizeValidationError' || e.name === 'SequelizeUniqueConstraintError');
+  
 
   handleValidationErrorAtCreation = (e, res, clients, address) => {
     res.locals.errors = getErrors(e);
     this.renderAddForm(res, clients, address);
   }
 
-  handleUndefinedError(e, res, next) {
-    const err = new Error(e.message);
-    err.status = 404;
-    res.locals.err = err;
-    next(e);
-  }
-
   getUpdate = async(req, res, next) => {
     try {
       const address = await addressService.findById(req.params.id);
-      if (!address) return this.handleAddressNotFound(res);
+      if (!address) return this.handleAddressNotFound(res, next);
       const clients = await clientService.findAll();
       return this.renderUpdateForm(res, clients, address);
     }
@@ -129,7 +122,7 @@ class AddressController {
     let address;
     try {
       address = await addressService.findByIdOnlyAddress(req.params.id);
-      if (!address) return this.handleAddressNotFound(res);
+      if (!address) return this.handleAddressNotFound(res, next);
       this.updateAddressObjByReq(address, req);
       const updatedAddress = await addressService.update(address);
       res.redirect(updatedAddress.urlPage);
@@ -138,11 +131,10 @@ class AddressController {
       let clients;
       try {
         clients = await clientService.findAll();
-        console.log(address.toJSON());
         return this.handleUpdateError(e, res, next, clients, address);
       }
       catch (e) {
-        return this.handleUndefinedError(e, res, next);
+        return handleUndefinedError(e, res, next);
       }
     }
   }
@@ -156,24 +148,21 @@ class AddressController {
   }
 
   handleUpdateError = (e, res, next, clients, address) => {
-    if (this.isValidationError(e)) {
-      console.log('address 2', address.toJSON());
+    if (isValidationError(e)) {
       return this.handleValidationErrorAtUpdate(e, res, clients, address);
     }
-    return this.handleUndefinedError(e, res, next);
+    return handleUndefinedError(e, res, next);
   }
 
   handleValidationErrorAtUpdate = (e, res, clients, address) => {
     res.locals.errors = getErrors(e);
-    console.log('address 3', address.toJSON());
-    console.log('clients', clients);
     this.renderUpdateForm(res, clients, address);
   }
 
   show = async(req, res, next) => {
     try {
       const address = await addressService.findById(req.params.id);
-      if (!address) return this.handleAddressNotFound(res);
+      if (!address) return this.handleAddressNotFound(res, next);
       return this.renderAddressPage(res, address);
     }
     catch (e) {
@@ -181,11 +170,8 @@ class AddressController {
     }
   }
 
-  handleAddressNotFound(res) {
-    const err = new Error('Address not found.');
-    err.status = 404;
-    res.locals.err = err;
-    next();
+  handleAddressNotFound(res, next) {
+    handleNotFound(res, 'Address', next);
   }
 
   renderAddressPage(res, address) {
@@ -198,7 +184,7 @@ class AddressController {
   getDelete = async(req, res, next) => {
     try {
       const address = await addressService.findById(req.params.id);
-      if (!address) return this.handleAddressNotFound(res);
+      if (!address) return this.handleAddressNotFound(res, next);
       res.locals.title = "Delete Address";
       res.render('address/addressDelete', {
         address
@@ -212,7 +198,7 @@ class AddressController {
   delete = async(req, res, next) => {
     try {
       const address = await addressService.findByIdOnlyAddress(req.params.id);
-      if (!address) return this.handleAddressNotFound(res);
+      if (!address) return this.handleAddressNotFound(res, next);
       await addressService.delete(address);
       res.redirect('/address');
     }

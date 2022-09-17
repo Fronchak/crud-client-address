@@ -6,7 +6,17 @@ module.exports = class Category extends Model {
     super.init({
       category: {
         type: DataTypes.STRING,
-        defaultValue: ''
+        defaultValue: '',
+        allowNull: false,
+        validate: {
+          len: {
+            args: [2, 50],
+            msg: `Category's name must have at least 2 letters`
+          }
+        },
+        set(value) {
+          this.setDataValue('category', value.trim());
+        }
       },
       urlPage: {
         type: Sequelize.VIRTUAL,

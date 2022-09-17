@@ -9,6 +9,18 @@ class CategoryService {
   findById = async(id) => {
     return await Category.findByPk(id);
   }
+
+  findAll = async() => {
+    return await Category.findAll();
+  }
+
+  update = async(category) => {
+    return await category.save();
+  }
+
+  delete = async(category) => {
+    await category.destroy();
+  }
 }
 
 module.exports = new CategoryService();
