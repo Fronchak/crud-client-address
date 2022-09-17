@@ -9,7 +9,7 @@ router.get('/update/:id', controller.getUpdate);
 router.post('/update/:id', controller.update);
 router.get('/delete/:id', controller.getDelete);
 router.post('/delete/:id', controller.delete);
+router.get('/:id', controller.show);
 router.get('/', controller.index);
-router.get('/show/:id', controller.show);
 
 module.exports = router;

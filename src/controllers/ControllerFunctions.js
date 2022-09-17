@@ -15,5 +15,13 @@ module.exports.handleNotFound = (res, description, next) => {
   next(err);
 }
 
-module.exports.getErrors = (e) => e.message.split(',').map(msg => msg.replace('Validation error: ', ''));
+module.exports.handleNotFoundTest = (e, res, next) => {
+  e.status = 404;
+  res.locals.err = e;
+  next(e);
+}
+
+
+
+module.exports.getErrors = (e) => e.errors.map((err) => err.message);
 

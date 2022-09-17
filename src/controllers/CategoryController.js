@@ -43,9 +43,16 @@ class CategoryController {
   }
 
   handleErrorAtCreation = (e, res, next, category) => {
+    const errors = e.errors;
+    console.log(errors);
+    for(let i = 0; i < errors.length; i++) {
+      console.log("----------------------");
+      console.log(errors[i].message);
+    }
     if (isValidationError(e)) {
       res.locals.errors = getErrors(e);
       this.renderCreateForm(res, category);
+      return;
     }
     handleUndefinedError(e, res, next)
   }

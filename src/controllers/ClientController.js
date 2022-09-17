@@ -7,15 +7,6 @@ class ClientController {
   index = async (req, res, next) => {
     try {
       const clients = await service.findAllWithAddress();
-      clients.forEach((client) => {
-        if (client.Address) {
-          //console.log(typeof client.Address)
-          ///console.log('------------------------------')
-          console.log(client.Address.dataValues);
-          console.log(client.Address.completeAddress);
-          console.log(1);
-        }
-      });
       res.locals.title = 'All Clients';
       res.render('client/clientList', {
         clients: clients

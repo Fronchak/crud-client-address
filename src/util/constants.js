@@ -8,5 +8,8 @@ module.exports = {
   addressUpdateUrlPage: '/address/update/',
   categoryMainUrlPage: '/categories/',
   categoryDeleteUrlPage: '/categories/delete/',
-  categoryUpdateUrlPage: '/categories/update/'
+  categoryUpdateUrlPage: '/categories/update/',
+  productMainUrlPage: '/products/',
+  productDeleteUrlPage: '/products/delete/',
+  productUpdateUrlPage: '/products/update/'
 }

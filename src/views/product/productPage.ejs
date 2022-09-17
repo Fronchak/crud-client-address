@@ -1,0 +1,12 @@
+<%- include('../includes/fullHead'); %>
+  <h3><strong>Product: </strong><%= product.name %></h3>
+  <h3><strong>Price: </strong><%= product.currency %></h3>
+  <div class="mt-3">
+    <button type="button" class="btn btn-primary">
+      <a class="nav-link active" aria-current="page" href=<%= product.urlUpdatePage %>>Update</a>
+    </button>
+    <button type="button" class="btn btn-danger">
+      <a class="nav-link active" aria-current="page" href=<%= product.urlDeletePage %>>Delete</a>
+    </button>
+  </div>
+<%- include('../includes/footer'); %>

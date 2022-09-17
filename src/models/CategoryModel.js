@@ -8,6 +8,7 @@ module.exports = class Category extends Model {
         type: DataTypes.STRING,
         defaultValue: '',
         allowNull: false,
+        unique: true,
         validate: {
           len: {
             args: [2, 50],

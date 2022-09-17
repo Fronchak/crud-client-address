@@ -47,11 +47,11 @@ class AddressController {
       const client = await clientService.findByIdWithAddress(req.body.client);
       if (!client) return this.handleClientNotFound(res);
       address = this.getAddressFromReq(req);
-      if (client.Address) {
-        const clients = await clientService.findAll();
-        this.handleTest(res, clients, address);
-        return;
-      }
+      //if (client.Address) {
+      //  const clients = await clientService.findAll();
+      //  this.handleTest(res, clients, address);
+      //  return;
+      // }
 
       const createdAddress = await addressService.save(address);
       res.redirect(createdAddress.urlPage);
