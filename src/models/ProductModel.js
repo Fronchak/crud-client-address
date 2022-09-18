@@ -8,7 +8,9 @@ module.exports = class Product extends Model {
         type: DataTypes.STRING,
         allowNull: false,
         defaultValue: '',
-        unique: true,
+        unique: {
+          msg: 'Produto já cadastrado'
+        },
         validate: {
           len: {
             args: [2, 50],

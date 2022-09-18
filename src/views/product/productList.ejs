@@ -1,0 +1,8 @@
+<%- include('../includes/fullHead'); %>
+  <% for (const product of products) { %>
+    <h3><strong>Product: </strong>
+      <a href=<%= product.urlPage %>><%= product.name %></a>
+    </h3>
+    <hr>
+  <% } %>
+<%- include('../includes/footer'); %>

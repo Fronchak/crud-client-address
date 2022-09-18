@@ -34,7 +34,9 @@ module.exports = class Client extends Model {
         type: DataTypes.STRING,
         defaultValue: '',
         allowNull: false,
-        unique: true,
+        unique: {
+          msg: 'Email já cadastrado'
+        },
         validate: {
           isEmail: {
             msg: 'Invalid email format'

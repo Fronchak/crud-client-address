@@ -1,14 +1,23 @@
 const service = require('../services/ProductService');
 const NotFoundError = require('../errors/NotFoundError');
 const MyValidationError = require('../errors/MyValidationError');
-const {handleUndefinedError, handleNotFound, handleNotFoundTest} = require('./ControllerFunctions');
+const {handleUndefinedError, handleNotFoundTest} = require('./ControllerFunctions');
 
 class ProductController {
 
   product;
 
-  index = (req, res, next) => {
-    res.send('index');
+  index = async (req, res, next) => {
+    try {
+      const products = await service.findAll();
+      res.locals.title = 'All Products';
+      res.render('product/productList', {
+        products
+      });
+    }
+    catch (e) {
+      this.handleError(e, res, next);
+    }
   }
 
   show = async (req, res, next) => {
@@ -29,7 +38,7 @@ class ProductController {
     });
   }
 
-  getStore = (req, res, next) => {
+  getStore = (req, res) => {
     this.renderForm(res);
   }
 
@@ -42,8 +51,8 @@ class ProductController {
 
   store = async(req, res, next) => {
     try {
-      this.product = null;
-      this.product = this.getValuesFromReq(req);
+      this.product = {};
+      this.updateProductByValuesFromReq(this.product, req);
       this.product = await service.save(this.product);
       res.redirect(this.product.urlPage);
     }
@@ -52,11 +61,9 @@ class ProductController {
     } 
   }
 
-  getValuesFromReq = (req) => {
-    return {
-      name: req.body.name,
-      price: req.body.price
-    };
+  updateProductByValuesFromReq(product, req) {
+    product.name = req.body.name;
+    product.price = req.body.price;
   }
 
   handleError = (e, res, next) => {
@@ -68,24 +75,56 @@ class ProductController {
       handleNotFoundTest(e, res, next);
     }
     else {
-      handleUndefinedError(e);
+      handleUndefinedError(e, res, next);
     }
   }
 
-  getUpdate = (req, res, next) => {
-    res.send('getUpdate');
+  getUpdate = async (req, res, next) => {
+    try {
+      this.product = {};
+      this.product = await service.findById(req.params.id);
+      this.renderForm(res, this.product);
+    }
+    catch (e) {
+      handleError(e);
+    }
   }
 
-  update = (req, res, next) => {
-    res.send('update');
+  update = async (req, res, next) => {
+    try {
+      this.product = {};
+      this.product = await service.findById(req.params.id);
+      this.updateProductByValuesFromReq(this.product, req);
+      const createdProduct = await service.update(this.product);
+      res.redirect(createdProduct.urlPage);
+    }
+    catch (e) {
+      this.handleError(e, res, next);
+    }
   }
 
-  getDelete = (req, res, next) => {
-    res.send('getDelete');
+  getDelete = async (req, res, next) => {
+    try {
+      this.product = {};
+      this.product = await service.findById(req.params.id);
+      res.locals.title = 'Delete Product';
+      res.render('product/productDelete', {
+        product: this.product
+      });
+    }
+    catch (e) {
+      this.handleError(e, res, next);
+    }
   }
 
-  delete = (req, res, next) => {
-    res.send('delete');
+  delete = async (req, res, next) => {
+    try {
+      await service.deleteById(req.params.id);
+      res.redirect('/products');
+    }
+    catch (e) {
+      this.handleError(e, res, next);
+    }
   }
 }
 

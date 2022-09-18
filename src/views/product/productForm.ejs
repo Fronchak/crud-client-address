@@ -8,7 +8,9 @@
       <label for="price">Price:</label>
       <input type="number" id="price" class="form-control" name="price" step="0.5" min="0" value=<%= product.price %> >
     </div>
-    <button type="submit" class="btn btn-primary mt-3">Add</button>
+    <button type="submit" class="btn btn-primary mt-3">
+      <%= `${product.id ? 'Update' : 'Add'}` %>
+    </button>
   </form>
 
 <%- include('../includes/footer'); %>
