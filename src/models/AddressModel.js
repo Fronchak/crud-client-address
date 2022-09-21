@@ -37,6 +37,24 @@ module.exports = class Address extends Model {
           }
         }
       },
+      client_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        //defaultValue: null,
+        unique: {
+          msg: 'Cliente já possui um endereço cadastrado'
+        },
+        references: {
+          model: 'clients',
+          key: 'id'
+        },
+        onDelete: 'CASCADE',
+        validate: {
+          notNull: {
+            msg: 'Endereço deve estar relacionado com um cliente'
+          }
+        }
+      },
       completeAddress: {
         type: DataTypes.VIRTUAL,
         get() {
@@ -67,12 +85,13 @@ module.exports = class Address extends Model {
     return this;
   }
 
+  
   static associate(models) {
     this.belongsTo(models.Client, {
-      foreignKey: {
-        allowNull: false,
-        unique: true
-      }
+      foreignKey: 'client_id'
     });
   }
+  
+  
+  
 }

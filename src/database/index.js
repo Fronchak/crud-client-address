@@ -4,9 +4,10 @@ const Client = require('../models/ClientModel.js');
 const Address = require('../models/AddressModel.js');
 const Category = require('../models/CategoryModel');
 const Product = require('../models/ProductModel');
+const Order = require('../models/OrderModel');
 
 const connection = new Sequelize(config);
-const models = [Client, Address, Category, Product];
+const models = [Client, Address, Category, Product, Order];
 models.forEach((model) => model.init(connection));
 models.forEach((model) => model.associate && model.associate(connection.models));
 //testConnection();

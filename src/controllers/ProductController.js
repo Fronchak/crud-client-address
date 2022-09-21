@@ -1,4 +1,5 @@
 const service = require('../services/ProductService');
+const categoryService = require("../services/CategoryService");
 const NotFoundError = require('../errors/NotFoundError');
 const MyValidationError = require('../errors/MyValidationError');
 const {handleUndefinedError, handleNotFoundTest} = require('./ControllerFunctions');
@@ -23,7 +24,7 @@ class ProductController {
   show = async (req, res, next) => {
     try {
       this.product = {};
-      this.product = await service.findById(req.params.id);
+      this.product = await service.findById(req.params.id)
       this.renderProductPage(res);
     }
     catch (e) {
@@ -38,14 +39,21 @@ class ProductController {
     });
   }
 
-  getStore = (req, res) => {
-    this.renderForm(res);
+  getStore = async (req, res) => {
+    try {
+      const categories = await categoryService.findAll();
+      this.renderForm(res, categories);
+    }
+    catch (e) {
+      this.handleError(e);
+    }
   }
 
-  renderForm(res, product = {}) {
+  renderForm(res, categories, product = {}) {
     res.locals.title = product.id ? 'Update Product' : 'Create Product';
     res.render('product/productForm', {
-      product
+      product,
+      categories
     });
   }
 
@@ -53,8 +61,10 @@ class ProductController {
     try {
       this.product = {};
       this.updateProductByValuesFromReq(this.product, req);
-      this.product = await service.save(this.product);
-      res.redirect(this.product.urlPage);
+      console.log(this.product);
+      const newProduct = await service.save(this.product);
+      console.log(newProduct.toJSON());
+      res.redirect(newProduct.urlPage);
     }
     catch (e) {
       this.handleError(e, res, next);
@@ -62,14 +72,15 @@ class ProductController {
   }
 
   updateProductByValuesFromReq(product, req) {
+
     product.name = req.body.name;
-    product.price = req.body.price;
+    product.price = Number(req.body.price);
+    product.category_id = req.body.category
   }
 
-  handleError = (e, res, next) => {
+  handleError = async (e, res, next) => {
     if (e instanceof MyValidationError) {
-      res.locals.errors = e.message.split(',');
-      this.renderForm(res, this.product);
+      this.handleValidationError(e, res, next);
     }
     else if (e instanceof NotFoundError) {
       handleNotFoundTest(e, res, next);
@@ -79,14 +90,26 @@ class ProductController {
     }
   }
 
+  handleValidationError = async (e, res, next) => {
+    try {
+      const categories = await categoryService.findAll();
+      res.locals.errors = e.message.split(',');
+      this.renderForm(res, categories, this.product);
+    }
+    catch (err) {
+      handleUndefinedError(err)
+    }
+  }
+
   getUpdate = async (req, res, next) => {
     try {
       this.product = {};
       this.product = await service.findById(req.params.id);
-      this.renderForm(res, this.product);
+      const categories = await categoryService.findAll();
+      this.renderForm(res, categories, this.product);
     }
     catch (e) {
-      handleError(e);
+      this.handleError(e, res, next);
     }
   }
 

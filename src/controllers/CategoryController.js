@@ -1,7 +1,11 @@
 const service = require('../services/CategoryService');
-const {isValidationError, handleUndefinedError, handleNotFound, getErrors} = require('./ControllerFunctions');
+const NotFoundError = require('../errors/NotFoundError');
+const MyValidationError = require('../errors/MyValidationError');
+const {handleUndefinedError, handleNotFoundTest} = require('./ControllerFunctions');
 
 class CategoryController {
+
+  category;
 
   index = async(req, res, next) => {
     try {
@@ -12,131 +16,105 @@ class CategoryController {
       });
     }
     catch (e) {
-      handleUndefinedError(e, res, next);
+      this.handleError(e, res, next);
     }
   }
 
-  getStore = async(req, res, next) => {
-    this.renderCreateForm(res);
+  getStore = (req, res) => {
+    this.renderForm(res);
   }
 
-  renderCreateForm = (res, category = {}) => {
-    res.locals.title = 'Create new Category';
-    this.renderForm(res, category);
-  } 
-
-  renderForm(res, category) {
+  renderForm(res, category = {}) {
+    res.locals.title = category.id ? 'Update Category' : 'Create Category'
     res.render('category/categoryForm', {
       category
     });
   }
 
   store = async(req, res, next) => {
-    const category = { category: req.body.category };
     try {
-      const createdCategory = await service.save(category);
-      res.redirect(createdCategory.urlPage);
+      this.category = {};
+      this.updateCategoryByValuesFromReq(this.category, req);
+      const newCategory = await service.save(this.category);
+      res.redirect(newCategory.urlPage);
     }
     catch (e) {
-      this.handleErrorAtCreation(e, res, next, category);
+      this.handleError(e, res, next);
     }
   }
 
-  handleErrorAtCreation = (e, res, next, category) => {
-    const errors = e.errors;
-    console.log(errors);
-    for(let i = 0; i < errors.length; i++) {
-      console.log("----------------------");
-      console.log(errors[i].message);
+  updateCategoryByValuesFromReq(category, req) {
+    category.category = req.body.category;
+  }
+
+  handleError(e, res, next) {
+    if (e instanceof MyValidationError) {
+      res.locals.errors = e.message.split(',');
+      this.renderForm(res, this.category);
     }
-    if (isValidationError(e)) {
-      res.locals.errors = getErrors(e);
-      this.renderCreateForm(res, category);
-      return;
+    else if (e instanceof NotFoundError) {
+      handleNotFoundTest(e, res, next);
     }
-    handleUndefinedError(e, res, next)
+    else {
+      handleUndefinedError(e, res, next);
+    }
   }
 
   show = async(req, res, next) => {
     try {
-      const category = await service.findById(req.params.id);
-      if (!category) return this.handleCategoryNotFound(res, next);
-      this.renderCategoryPage(res, category);
+      this.category = {};
+      this.category = await service.findById(req.params.id);
+      res.locals.title = 'Category Page';
+      res.render('category/categoryPage', { category: this.category });
     }
     catch (e) {
-      handleUndefinedError(e, res, next);
+      this.handleError(e, res, next);
     }
-  }
-
-  handleCategoryNotFound(res, next) {
-    handleNotFound(res, 'Category', next);
-  }
-
-  renderCategoryPage(res, category) {
-    res.locals.title = 'Category Page';
-    res.render('category/categoryPage', { category });
   }
 
   getUpdate = async(req, res, next) => {
     try {
-      const category = await service.findById(req.params.id);
-      if (!category) return this.handleCategoryNotFound(res, next);
-      this.renderUpdateForm(res, category);
+      this.category = {};
+      this.category = await service.findById(req.params.id);
+      this.renderForm(res, this.category);
     }
     catch (e) {
-      handleUndefinedError(e, res, next);
+      this.handleError(e, res, next);
     }
-  }
-
-  renderUpdateForm = (res, category) => {
-    res.locals.title = 'Update Category';
-    this.renderForm(res, category);
   }
 
   update = async(req, res, next) => {
-    let category;
     try {
-      category = await service.findById(req.params.id);
-      if (!category) return this.handleCategoryNotFound(res, next);
-      category.category = req.body.category;
-      await service.update(category);
-      res.redirect(category.urlPage);
+      this.category = {};
+      this.category = await service.findById(req.params.id);
+      this.updateCategoryByValuesFromReq(this.category, req);
+      const updatedCategory = await service.update(this.category);
+      res.redirect(updatedCategory.urlPage);
     }
     catch (e) {
-      this.handleErrorAtUpdate(e, res, next, category);
+      this.handleError(e, res, next);
     }
-  }
-
-  handleErrorAtUpdate = (e, res, next, category) => {
-    if (isValidationError(e)) {
-      res.locals.errors = getErrors(e);
-      this.renderUpdateForm(res, category);
-      return;
-    }
-    handleUndefinedError(e, res, next);
   }
 
   getDelete = async(req, res, next) => {
     try {
-      const category = await service.findById(req.params.id);
-      if (!category) return this.handleCategoryNotFound(res, next);
+      this.category = {};
+      this.category = await service.findById(req.params.id);
       res.locals.title = 'Delete Category';
-      res.render('category/categoryDelete', { category });
+      res.render('category/categoryDelete', { category: this.category });
     }
     catch (e) {
-      handleUndefinedError(e, res, next);
+      this.handleError(e, res, next);
     }
   }
 
   delete = async(req, res, next) => {
     try {
-      const category = await service.findById(req.params.id);
-      if (!category) return this.handleCategoryNotFound(res, next);
-      await service.delete(category);
+      await service.deleteById(req.params.id);
       res.redirect('/categories');
     }
     catch (e) {
-      handleUndefinedError(e, res, next);
+      this.handleError(e, res, next);
     }
   }
 }

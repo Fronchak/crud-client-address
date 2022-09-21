@@ -8,7 +8,9 @@ module.exports = class Category extends Model {
         type: DataTypes.STRING,
         defaultValue: '',
         allowNull: false,
-        unique: true,
+        unique: {
+          msg: 'Product already register'
+        },
         validate: {
           len: {
             args: [2, 50],
@@ -41,5 +43,11 @@ module.exports = class Category extends Model {
       sequelize
     });
     return this;
+  }
+
+  static associate(models) {
+    this.hasMany(models.Product, {
+      foreignKey: 'category_id'
+    });
   }
 }

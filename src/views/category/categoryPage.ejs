@@ -8,4 +8,13 @@
       <a class="nav-link active" aria-current="page" href=<%= category.urlDeletePage %>>Delete</a>
     </button>
   </div>
+  <% if(category.Products.length > 0) { %>
+    <h3 class="mt-3"><strong>Products: </strong></h3>
+    <% for(const product of category.Products) { %>
+      <h3>
+        <a href=<%= product.urlPage %>><%= `#${product.id} - ${product.name}` %></a>
+      </h3>
+      <hr>
+    <% } %>
+  <% } %>
 <%- include('../includes/footer'); %>

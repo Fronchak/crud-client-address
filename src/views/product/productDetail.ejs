@@ -1,2 +1,6 @@
+<h3><strong>Category: </strong>
+  <a href=<%= product.Category.urlPage %>><%= product.Category.category %></a>
+</h3>
 <h3><strong>Product: </strong><%= product.name %></h3>
 <h3><strong>Price: </strong><%= product.currency %></h3>
+<h3><strong>Code: </strong><%= `#${product.id}` %></h3>

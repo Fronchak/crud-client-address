@@ -45,18 +45,14 @@ class AddressController {
     let address;
     try {
       const client = await clientService.findByIdWithAddress(req.body.client);
-      if (!client) return this.handleClientNotFound(res);
+      //if (!client) return this.handleClientNotFound(res, next);
       address = this.getAddressFromReq(req);
-      //if (client.Address) {
-      //  const clients = await clientService.findAll();
-      //  this.handleTest(res, clients, address);
-      //  return;
-      // }
-
       const createdAddress = await addressService.save(address);
-      res.redirect(createdAddress.urlPage);
+      //res.redirect(createdAddress.urlPage);
+      res.json(createdAddress);
     }
     catch (e) {
+      console.log('error', e);
       let clients;
       try {
         clients = await clientService.findAll();
@@ -68,8 +64,8 @@ class AddressController {
     }
   }
 
-  handleClientNotFound = (res) => {
-    clientController.handleClientNotFound(res);
+  handleClientNotFound = (res, next) => {
+    clientController.handleClientNotFound(res, next);
   }
 
   handleTest = (res, clients, address) => {
@@ -79,11 +75,12 @@ class AddressController {
 
   getAddressFromReq(req) {
     const body = req.body;
+    console.log('client', body.client);
     return {
       city: body.city,
       street: body.street,
       number: body.number,
-      ClientId: body.client
+      client_id: body.client
     };
   }
 

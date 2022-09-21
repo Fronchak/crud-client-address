@@ -5,3 +5,7 @@
 .main-title {
   text-align: center;
 }
+
+a {
+  text-decoration: none;
+}

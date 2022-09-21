@@ -1,137 +1,107 @@
 const parseDateToUTC = require('../util/parseDateToUTC');
 const service = require('../services/ClientService');
 const getErrors = require('../util/getArrayOfErrorsMessage');
+const NotFoundError = require('../errors/NotFoundError');
+const MyValidationError = require('../errors/MyValidationError');
+const {handleUndefinedError, handleNotFoundTest} = require('./ControllerFunctions');
 
 class ClientController {
 
+  client;
+
   index = async (req, res, next) => {
     try {
-      const clients = await service.findAllWithAddress();
+      const clients = await service.findAll();
       res.locals.title = 'All Clients';
       res.render('client/clientList', {
-        clients: clients
+        clients
       });
     } 
     catch (e) {
-      next(e);
+      this.handleError(e, res, next);
+    }
+  }
+
+  handleError(e, res, next) {
+    if (e instanceof MyValidationError) {
+      res.locals.errors = e.message.split(',');
+      this.renderForm(res, this.client);
+    }
+    else if (e instanceof NotFoundError) {
+      handleNotFoundTest(e, res, next);
+    }
+    else {
+      handleUndefinedError(e, res, next);
     }
   }
 
   getStore = (req, res) => {
-    this.renderCreateForm(res);
+    this.renderForm(res);
   }
 
-  renderCreateForm(res, client = {}) {
-    res.locals.title = 'Client';
-    res.locals.description = 'Fill the form to add new client';
-    res.locals.clientObj = client;
-    res.render('client/clientForm');
+  renderForm(res, client = {}) {
+    res.locals.title = client.id ? 'Update Client' : 'Create Client';
+    res.render('client/clientForm', {
+      clientObj: client
+    });
   }
 
   store = async (req, res, next) => {
-    const client = this.createClientFromReq(req);
     try {
-      const clientCreated = await service.save(client);
+      this.client = {};
+      this.updateClientFromValuesFromReq(this.client, req);
+      const clientCreated = await service.save(this.client);
       res.redirect(clientCreated.urlPage);
     }
     catch (e) {
-      return this.handleCreateError(e, res, next, client);
+      this.handleError(e, res, next);
     }
   }
 
-  handleCreateError = (e, res, next, client) => {
-    if (e.name === 'SequelizeValidationError' || e.name === 'SequelizeUniqueConstraintError')
-       return this.handleValidationErrorAtCreation(e, res, client);
-    this.handleUndefinedError(e, res, next);
-  }
-
-  handleValidationErrorAtCreation(e, res, client) {
-    res.locals.errors = getErrors(e);
-    this.renderCreateForm(res, client);
-  }
-
-  handleUndefinedError(e, res, next) {
-    const err = new Error(e.message);
-    err.status = 404;
-    res.locals.err = err;
-    next(e);
-  }
-
-  createClientFromReq(req) {
-    const body = req.body;
-    return {
-      firstName: body.first_name,
-      lastName: body.last_name,
-      email: body.email,
-      birthDate: parseDateToUTC(body.birth_date),
-      status: body.status
-    }
+  updateClientFromValuesFromReq(client, req) {
+    client.firstName = req.body.first_name;
+    client.lastName = req.body.last_name;
+    client.email = req.body.email;
+    client.birthDate = parseDateToUTC(req.body.birth_date);
+    client.status = req.body.status;
   }
 
   show = async (req, res, next) => {
     try {
-      const clientObj = await service.findByIdWithAddress(req.params.id);
-      if (!clientObj) return this.handleClientNotFound(res);
-      this.renderClientPage(clientObj, res);
-    } catch (e) {
-      this.handleUndefinedError(e, res, next);
+      this.client = {};
+      this.client = await service.findByIdWithAddress(req.params.id);
+      res.locals.title = 'Client Page';
+      res.render('client/clientPage', {
+        clientObj: this.client
+      });
+    } 
+    catch (e) {
+      this.handleError(e, res, next);
     }
-  }
-
-  handleClientNotFound(res) {
-    const err = new Error('Client not found.');
-    err.status = 404;
-    res.locals.err = err;
-    next();
-  }
-
-  renderClientPage(clientObj, res) {
-    res.locals.title = 'Client Personal Page'
-    res.render('client/clientPage', {
-      clientObj
-    });
   }
 
   getUpdate = async (req, res, next) => {
     try {
-      const client = await service.findById(req.params.id);
-      if (!client) return this.handleClientNotFound(res);
-      this.renderUpdateForm(res, client);
+      this.client = {};
+      this.client = await service.findById(req.params.id);
+      this.renderForm(res, this.client);
     }
     catch (e) {
-      this.handleUndefinedError(e, res, next);
+      this.handleError(e, res, next);
     }
-  }
-
-  renderUpdateForm(res, client) {
-    res.locals.title = 'Update Client';
-    res.locals.clientObj = client;
-    res.render('client/clientForm');
   }
 
   update = async(req, res, next) => {
-    let client;
     try {
-      client = await service.findById(req.params.id);
-      if (!client) return this.handleClientNotFound(res);
-      this.updateClientByReq(client, req);
-      const updatedClient = await service.update(client);
-      this.renderClientPage(updatedClient, res);
+      this.client = {};
+      this.client = await service.findById(req.params.id);
+      this.updateClientFromValuesFromReq(this.client, req);
+      const updatedClient = await service.update(this.client);
+      res.redirect(updatedClient.urlPage);
     } 
     catch (e) {
-      this.handleUpdateError(e, res, next, client);
+      this.handleError(e, res, next);
     }
-  }
-
-  handleUpdateError = (e, res, next, client) => {
-    if (e.name === 'SequelizeValidationError' || e.name === 'SequelizeUniqueConstraintError')
-      return this.handleValidationErrorAtUpdate(e, res, client);
-    this.handleUndefinedError(e, res, next);
-  }
-
-  handleValidationErrorAtUpdate(e, res, client) {
-    res.locals.errors = getErrors(e);
-    this.renderUpdateForm(res, client);
   }
 
   updateClientByReq(client, req) {
@@ -145,30 +115,23 @@ class ClientController {
 
   getDelete = async (req, res, next) => {
     try {
-      const client = await service.findById(req.params.id);
-      if (!client) return this.handleClientNotFound(res);
-      this.renderDeletePage(client, res);
+      this.client = {};
+      this.client = await service.findById(req.params.id);
+      res.locals.title = "Confirm Delete";
+      res.render('client/clientDeletePage', { clientObj: this.client });
     }
     catch (e) {
-      next(e);
+      this.handleError(e);
     }
-  }
-
-  renderDeletePage(client, res) {
-    res.locals.title = "Confirm Delete";
-    res.locals.clientObj = client;
-    res.render('client/clientDeletePage');
   }
 
   delete = async (req, res, next) => {
     try {
-      const client = await service.findById(req.params.id);
-      if (!client) return this.handleClientNotFound(res);
-      await service.delete(client);
+      await service.deleteById(req.params.id);
       res.redirect('/clients');
     }
     catch (e) {
-      next(e);
+      this.handleError(e);
     }
   }
 

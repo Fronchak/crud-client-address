@@ -22,7 +22,33 @@ module.exports = class Product extends Model {
         }
       },
       price: {
-        type: DataTypes.FLOAT(7, 2)
+        type: DataTypes.FLOAT(7, 2),
+        defaultValue: 0,
+        allowNull: false,
+        validate: {
+          isNumeric: {
+            msg: 'Price must be a number'
+          },
+          min: {
+            args: 0.5,
+            msg: 'Price must be specified'
+          }
+        }
+        
+      },
+      category_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'categories',
+          key: 'id'
+        },
+        onDelete: 'CASCADE',
+        validate: {
+          notNull: {
+            msg: 'Category must be specified'
+          }
+        }
       },
       urlPage: {
         type: DataTypes.VIRTUAL,
@@ -52,5 +78,11 @@ module.exports = class Product extends Model {
       sequelize
     });
     return this;
+  }
+
+  static associate(models) {
+    this.belongsTo(models.Category, {
+      foreignKey: 'category_id'
+    });
   }
 }

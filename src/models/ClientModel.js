@@ -98,9 +98,16 @@ module.exports = class Client extends Model {
     });
     return this;
   }
-
+  
+  
   static associate(models) {
-    this.hasOne(models.Address);
-    
+    this.hasOne(models.Address, {
+      foreignKey: 'client_id'
+    }); 
+    this.hasMany(models.Order, {
+      foreignKey: 'client_id'
+    });
   }
+  
+  
 }

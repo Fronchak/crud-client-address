@@ -8,6 +8,7 @@ const homeRouter = require('./src/routes/homeRoutes');
 const addressRouter = require('./src/routes/addressRoutes');
 const categotyRoutes = require('./src/routes/categoryRoutes');
 const productRoutes = require('./src/routes/ProductRoutes');
+const orderRoutes = require('./src/routes/OrderRoutes');
 require ('./src/database/index');
 
 dotenv.config();
@@ -41,6 +42,7 @@ class App {
     this.app.use('/address', addressRouter);
     this.app.use('/categories', categotyRoutes);
     this.app.use('/products', productRoutes);
+    this.app.use('/orders', orderRoutes);
   }
 
   errors() {

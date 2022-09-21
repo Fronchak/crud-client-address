@@ -1,4 +1,5 @@
 const Product = require('../models/ProductModel');
+const Category = require('../models/CategoryModel');
 const NotFoundError = require('../errors/NotFoundError');
 const MyValidationError = require('../errors/MyValidationError');
 const {isValidationError, getErrors} = require('./ServiceFunctions');
@@ -24,7 +25,10 @@ class ProductService {
 
   findById = async (id) => {
     const product = await Product.findByPk(id, {
-      attributes: ['id', 'name', 'price']
+      attributes: ['id', 'name', 'price'],
+      include: {
+        model: Category, attributes: ['id', 'category']
+      }
     });
     if (!product) throw new NotFoundError('Product');
     return product;
@@ -35,8 +39,12 @@ class ProductService {
   }
 
   deleteById = async (id) => {
-    const product = await this.findById(id);
-    await product.destroy();
+    const rowsDeleted = await Product.destroy({
+      where: {
+        id: id
+      }
+    });
+    if (rowsDeleted === 0) throw new NotFoundError('Product');
   }
 
   update = async (product) => {

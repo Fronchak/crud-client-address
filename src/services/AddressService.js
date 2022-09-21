@@ -5,7 +5,7 @@ class AddressService {
 
   save = async (address) => {
     const createdAddress = await Address.create(address);
-    return await this.findById(createdAddress.id);
+    return createdAddress.id;
   }
 
   async findById(id) {

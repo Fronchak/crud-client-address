@@ -1,0 +1,11 @@
+<h3><strong>Status: </strong> 
+  <% if (order.status === 'Paid') { %>
+    <span class="text-success">Paid</span>
+  <% } else if (order.status === 'Send') { %>
+    <span class="text-primary">Send</span>
+  <% } else if (order.status === 'Processing') { %>
+    <span class="text-warning">Processing</span>
+  <% } else if (order.status === 'Cancel') { %>
+    <span class="text-danger">Cancel</span>
+  <% } %>
+</h3>

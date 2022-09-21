@@ -1,20 +1,40 @@
 const Client = require('../models/ClientModel');
 const Address = require('../models/AddressModel');
+const NotFoundError = require('../errors/NotFoundError');
+const MyValidationError = require('../errors/MyValidationError');
+const {isValidationError, getErrors} = require('./ServiceFunctions');
+const { clientDeleteUrlPage } = require('../util/constants');
 
 class ClientService {
 
   save = async (client) => {
-    return await Client.create(client);
+    try {
+      return await Client.create(client);
+    }
+    catch (e) {
+      this.handleError(e);
+    }
+  }
+
+  handleError(e) {
+    if(isValidationError(e)) {
+      throw new MyValidationError(getErrors(e));
+    }
+    throw e;
   }
 
   async findById(id) {
-    return await Client.findByPk(id);
+    const client = await Client.findByPk(id);
+    if (!client) throw new NotFoundError('Client');
+    return client;
   }
 
   async findByIdWithAddress(id) {
-    return await Client.findByPk(id, {
+    const client = await Client.findByPk(id, {
       include: Address
     });
+    if (!client) throw new NotFoundError('Client');
+    return client;
   }
 
   async findAll() {
@@ -27,12 +47,20 @@ class ClientService {
     });
   }
 
-  async update(client) {
-    return await client.save();
+  update = async (client) => {
+    try {
+      return await client.save();
+    }
+    catch (e) {
+      this.handleError(e);
+    }
   }
 
-  async delete(client) {
-    return await client.destroy()
+  async deleteById(id) {
+    const rowsDeleted = await Client.destroy({
+      where: { id: id }
+    });
+    if (rowsDeleted === 0) throw new NotFoundError('Client');
   }
 }
 

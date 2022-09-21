@@ -1,0 +1,5 @@
+<h3><strong>Client: </strong>
+  <a href=<%= order.Client.urlPage %>><%= order.Client.fullName %></a>
+</h3>
+<h3><strong>Date: </strong><%= order.dateFormatted %></h3>
+<%- include('./orderStatus'); %>

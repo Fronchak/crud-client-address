@@ -1,0 +1,7 @@
+<%- include('../includes/fullHead'); %>
+  <% for(const order of orders) { %>
+    <h3><a href=<%= order.urlPage %>><%= `NF: ${order.id}` %></a></h3>
+    <%- include('./orderStatus', {order}); %>
+    <hr>
+  <% } %>
+<%- include('../includes/footer'); %>

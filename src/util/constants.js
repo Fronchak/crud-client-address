@@ -1,5 +1,6 @@
 module.exports = {
   myStatus: ['Bronze', 'Silver', 'Gold', 'Diamond'],
+  paymentStatus: ['Paid', 'Send', 'Processing', 'Cancel'],
   clientMainUrlPage: '/clients/',
   clientDeleteUrlPage: '/clients/delete/',
   clientUpdateUrlPage: '/clients/update/',
@@ -11,5 +12,8 @@ module.exports = {
   categoryUpdateUrlPage: '/categories/update/',
   productMainUrlPage: '/products/',
   productDeleteUrlPage: '/products/delete/',
-  productUpdateUrlPage: '/products/update/'
-}
+  productUpdateUrlPage: '/products/update/',
+  orderMainUrlPage: '/orders/',
+  orderDeleteUrlpage: '/orders/delete/',
+  orderUpdateUrlPage: '/orders/update/'
+};
