@@ -2,10 +2,9 @@ const orderService = require('../services/OrderService');
 const clientService = require('../services/ClientService');
 const NotFoundError = require('../errors/NotFoundError');
 const MyValidationError = require('../errors/MyValidationError');
-const {handleUndefinedError, handleNotFoundTest, isValidationError} = require('./ControllerFunctions');
+const {handleUndefinedError, handleNotFoundTest} = require('./ControllerFunctions');
 const constants = require('../util/constants');
 const parseDateToUTC = require("../util/parseDateToUTC");
-const Order = require('../models/OrderModel');
 
 class OrderController {
 

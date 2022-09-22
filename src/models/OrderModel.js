@@ -65,5 +65,8 @@ module.exports = class Order extends Model {
     this.belongsTo(models.Client, {
       foreignKey: 'client_id'
     }); 
+    this.belongsToMany(models.Product, {
+      through: models.OrderItem
+    });
   }
 }
