@@ -118,8 +118,9 @@ class OrderController {
       this.order = {};
       this.order = await orderService.findById(req.params.id);
       res.locals.title = 'Delete Order';
-      //res.send(this.order);
-      res.render('order/orderDelete');
+      res.render('order/orderDelete', {
+        order: this.order
+      });
     }
     catch (e) {
       this.handleError(e, res, next);
@@ -127,7 +128,13 @@ class OrderController {
   }
 
   delete = async (req, res, next) => {
-    
+    try {
+      await orderService.deleteById(req.params.id);
+      res.redirect('/orders');
+    }
+    catch (e) {
+      this.handleError(e, res, next);
+    }
   }
 
 }
