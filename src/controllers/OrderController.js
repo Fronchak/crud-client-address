@@ -5,6 +5,8 @@ const MyValidationError = require('../errors/MyValidationError');
 const {handleUndefinedError, handleNotFoundTest} = require('./ControllerFunctions');
 const constants = require('../util/constants');
 const parseDateToUTC = require("../util/parseDateToUTC");
+const getCurrencyFormated = require('../util/getCurrencyFormated');
+const orderItemController = require('./OrderItemController');
 
 class OrderController {
 
@@ -76,7 +78,9 @@ class OrderController {
   show = async (req, res, next) => {
     try {
       this.order = {};
-      this.order = await orderService.findById(req.params.id);
+      this.order = await orderService.findByIdWithAssociation(req.params.id);
+      console.log(this.order.Products.length);
+      this.setNumberFormat(this.order);
       res.locals.title = 'Order Page';
       res.render('order/orderPage', {
         order: this.order
@@ -86,6 +90,14 @@ class OrderController {
       console.log(e.message);
       this.handleError(e, res, next);
     }
+  }
+
+  setNumberFormat(order) {
+    order.Products.forEach((product) => {
+      orderItemController.setNumberFormat(product.OrderItem);
+    });
+    order.totalFormatted = getCurrencyFormated(order.total);
+    console.log(order.totalFormatted);
   }
 
   getUpdate = async (req, res, next) => {

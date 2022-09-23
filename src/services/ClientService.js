@@ -3,7 +3,6 @@ const Address = require('../models/AddressModel');
 const NotFoundError = require('../errors/NotFoundError');
 const MyValidationError = require('../errors/MyValidationError');
 const {isValidationError, getErrors} = require('./ServiceFunctions');
-const { clientDeleteUrlPage } = require('../util/constants');
 
 class ClientService {
 

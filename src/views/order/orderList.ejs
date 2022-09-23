@@ -1,4 +1,6 @@
 <%- include('../includes/fullHead'); %>
+  <h3><strong>Form: </strong><a href="/orders/create">Add New Order</a></h3>
+  <hr>
   <% for(const order of orders) { %>
     <h3><a href=<%= order.urlPage %>><%= `NF: ${order.id}` %></a></h3>
     <%- include('./orderStatus', {order}); %>

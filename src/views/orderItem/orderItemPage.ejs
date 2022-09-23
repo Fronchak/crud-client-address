@@ -1,0 +1,30 @@
+<%- include('../includes/fullHead'); %>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Order</th>
+        <th scope="col">Product</th>
+        <th scope="col">Price</th>
+        <th scope="col">Quantity</th>
+        <th scope="col">Subtotal</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th scope="row">
+          <a href=<%= orderItem.Order.urlPage %>>
+            <%= `NF: ${orderItem.Order.id}` %>
+          </a>
+        </th>
+        <td> 
+          <a href=<%= orderItem.Product.urlPage %>>
+            <%= orderItem.Product.name %>
+          </a> 
+        </td>
+        <td><%= orderItem.priceFormatted %></td>
+        <td><%= orderItem.quantity %></td>
+        <td><%= orderItem.subTotalFormatted %></td>
+      </tr>
+    </tbody>
+  </table>
+<%- include('../includes/footer'); %>

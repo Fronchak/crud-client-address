@@ -1,5 +1,44 @@
 <%- include('../includes/fullHead'); %>
+  <h3><strong>Form: </strong>
+    <a href=<%= `/orders/${order.id}/items/create` %>>Add New Item</a>
+  </h3>
   <%- include('./orderDetail'); %>
+  <table class="table table-bordered table-sm">
+    <thead class="thead-dark">
+      <tr class="table-active">
+        <th scope="col">Product</th>
+        <th scope="col">Price</th>
+        <th scope="col">Quantity</th>
+        <th scope="col">Subtotal</th>
+        <th scope="col">Update</th>
+        <th scope="col">Delete</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% for (const product of order.Products) { %>
+        <tr>
+          <td>
+            <a href=<%= product.urlPage %>><%= product.name %></a>
+          </td>
+          <td><%= product.OrderItem.priceFormatted %></td>
+          <td><%= product.OrderItem.quantity %></td>
+          <td><%= product.OrderItem.subTotalFormatted %></td>
+          <td>
+            <button type="button" class="btn btn-primary">Update</button>
+          </td>
+          <td>
+            <button type="button" class="btn btn-danger">Delete</button>
+          </td>
+        </tr>
+      <% } %>
+    </tbody>
+    <tfoot>
+      <tr class="table-success">
+        <td colspan="3">Total</td>
+        <td><%= order.totalFormatted %></td>
+      </tr>
+    </tfoot>
+  </table>
   <div class="mt-3">
     <button type="button" class="btn btn-primary">
       <a class="nav-link active" aria-current="page" href=<%= order.urlUpdatePage %>>Update</a>

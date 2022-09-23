@@ -68,5 +68,6 @@ module.exports = class Order extends Model {
     this.belongsToMany(models.Product, {
       through: models.OrderItem
     });
+    
   }
 }

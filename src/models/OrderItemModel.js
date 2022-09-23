@@ -38,9 +38,17 @@ module.exports = class OrderItem extends Model {
         type: DataTypes.INTEGER
       }
     }, {
-      sequelize,
-      ignoreDuplicates: true
+      sequelize
     });
     return this;
+  }
+
+  static associate(models) {
+    this.belongsTo(models.Order, {
+      foreignKey: 'order_id'
+    });
+    this.belongsTo(models.Product, {
+      foreignKey: 'product_id'
+    });
   }
 }
