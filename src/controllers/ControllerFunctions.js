@@ -1,3 +1,5 @@
+const getCurrencyFormated = require("../util/getCurrencyFormated");
+
 module.exports.isValidationError = (e) => 
   (e.name === 'SequelizeValidationError' || e.name === 'SequelizeUniqueConstraintError');
 
@@ -21,7 +23,17 @@ module.exports.handleNotFoundTest = (e, res, next) => {
   next(e);
 }
 
-
-
 module.exports.getErrors = (e) => e.errors.map((err) => err.message);
+
+module.exports.setOrderFormat = (order) => {
+  order.Products.forEach((product) => {
+    this.setItemNumberFormat(product.OrderItem);
+  });
+  order.totalFormatted = getCurrencyFormated(order.total);
+}
+
+module.exports.setItemNumberFormat = (orderItem) => {
+  orderItem.priceFormatted = getCurrencyFormated(orderItem.price);
+  orderItem.subTotalFormatted = getCurrencyFormated(orderItem.subTotal);
+}
 

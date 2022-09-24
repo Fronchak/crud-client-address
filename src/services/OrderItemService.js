@@ -24,6 +24,17 @@ class OrderItemService {
     throw e;
   }
 
+  findByIdWithoutInclude = async(idOrder, idProduct) => {
+    const orderItem = await OrderItem.findOne({
+      where: {
+        order_id: idOrder,
+        product_id: idProduct
+      }
+    });
+    if (!orderItem) throw new NotFoundError('OrderItem');
+    return orderItem;
+  }
+
   findById = async(idOrder, idProduct) => {
     const orderItem = await OrderItem.findOne({
       where: {
@@ -39,6 +50,24 @@ class OrderItemService {
 
   setSubtotal(orderItem) {
     orderItem.subTotal = orderItem.price * orderItem.quantity;
+  }
+
+  deleteById = async(idOrder, idProduct) => {
+    await OrderItem.destroy({
+      where: {
+        order_id: idOrder,
+        product_id: idProduct
+      }
+    });
+  }
+
+  update = async(orderItem) => {
+    try {
+      await orderItem.save();
+    }
+    catch (e) {
+      this.handleError(e);
+    }
   }
 
 }

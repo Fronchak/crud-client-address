@@ -2,11 +2,9 @@ const orderService = require('../services/OrderService');
 const clientService = require('../services/ClientService');
 const NotFoundError = require('../errors/NotFoundError');
 const MyValidationError = require('../errors/MyValidationError');
-const {handleUndefinedError, handleNotFoundTest} = require('./ControllerFunctions');
+const {handleUndefinedError, handleNotFoundTest, setOrderFormat} = require('./ControllerFunctions');
 const constants = require('../util/constants');
 const parseDateToUTC = require("../util/parseDateToUTC");
-const getCurrencyFormated = require('../util/getCurrencyFormated');
-const orderItemController = require('./OrderItemController');
 
 class OrderController {
 
@@ -50,7 +48,6 @@ class OrderController {
       this.order = {};
       this.updateOrderFromValuesFromReq(this.order, req);
       const newOrder = await orderService.save(this.order);
-      console.log(newOrder.urlCreateItem);
       res.redirect(newOrder.urlCreateItem);
     }
     catch (e) {
@@ -62,7 +59,6 @@ class OrderController {
     order.client_id = req.body.client;
     order.status = req.body.status;
     order.date = parseDateToUTC(req.body.date);
-    console.log(order);
   }
 
   handleError = async(e, res, next) => {
@@ -80,8 +76,7 @@ class OrderController {
     try {
       this.order = {};
       this.order = await orderService.findByIdWithAssociation(req.params.id);
-      console.log(this.order.Products.length);
-      this.setTotalNumberFormat(this.order);
+      setOrderFormat(this.order);
       res.locals.title = 'Order Page';
       res.render('order/orderPage', {
         order: this.order
@@ -91,17 +86,6 @@ class OrderController {
       console.log(e.message);
       this.handleError(e, res, next);
     }
-  }
-
-  printSomething() {
-    console.log('printSomething');
-  }
-
-  setTotalNumberFormat(order){
-    order.Products.forEach((product) => {
-      orderItemController.setNumberFormat(product.OrderItem);
-    });
-    order.totalFormatted = getCurrencyFormated(order.total);
   }
 
   getUpdate = async (req, res, next) => {

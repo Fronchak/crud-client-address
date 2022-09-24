@@ -19,10 +19,20 @@
         <td><%= product.OrderItem.quantity %></td>
         <td><%= product.OrderItem.subTotalFormatted %></td>
         <td>
-          <button type="button" class="btn btn-primary">Update</button>
+          <button type="button" class="btn btn-primary">
+            <a class="nav-link active" aria-current="page" 
+              href=<%= `/orders/${order.id}/products/${product.id}/update` %>>
+              Update
+            </a>
+          </button>
         </td>
         <td>
-          <button type="button" class="btn btn-danger">Delete</button>
+          <button type="button" class="btn btn-danger">
+            <a class="nav-link active" aria-current="page"
+             href=<%= `/orders/${order.id}/products/${product.id}/delete` %>>
+             Delete
+            </a>
+          </button>
         </td>
       </tr>
     <% } %>

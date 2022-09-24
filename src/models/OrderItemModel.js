@@ -1,5 +1,4 @@
 const { Model, DataTypes, VIRTUAL} = require('sequelize');
-const StaticOrderItemService = require("../services/StaticOrderItemService");
 
 module.exports = class OrderItem extends Model {
   static init(sequelize) {
@@ -37,18 +36,6 @@ module.exports = class OrderItem extends Model {
       },
       quantity: {
         type: DataTypes.INTEGER
-      },
-      urlUpdatePage: {
-        type: VIRTUAL,
-        get() {
-          return StaticOrderItemService.getItemUpdateUrlPage(this);
-        }
-      },
-      urlDeletePage: {
-        type: VIRTUAL,
-        get() {
-          return StaticOrderItemService.getItemDeleteUrlPage(this);
-        }
       }
     }, {
       sequelize

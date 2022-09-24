@@ -6,16 +6,19 @@
       <select class="form-control" id="product" name="product">
         <% for(const product of products) { %>
           <option value=<%= product.id %>>
-            <%= product.name %>
+            <%= `${product.name} - ${product.currency}` %>
           </option>
         <% } %>
       </select>
     </div>
     <div class="form-group">
       <label for="quantity">Quantity: </label>
-      <input type="number" step="1" min="1" class="form-control" id="quantity" name="quantity">
+      <input type="number" step="1" min="1" class="form-control" id="quantity" name="quantity" 
+      value=<%= orderItem.quantity %>>
     </div>
-    <button type="submit" class="btn btn-primary mt-3">Add</button>
+    <button type="submit" class="btn btn-primary mt-3">
+      <%= (orderItem ? 'Update' : 'Add' ) %>
+    </button>
   </form>
   <%- include('../order/orderTable'); %>
 <%- include('../includes/footer'); %>
