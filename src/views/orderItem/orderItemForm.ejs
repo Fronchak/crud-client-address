@@ -1,5 +1,6 @@
 <%- include('../includes/fullHead'); %>
-  <form method="post" action="">
+  <%- include('../order/orderDetail'); %>
+  <form method="post" action="" class="mb-3">
     <div class="form-group">
       <label for="product">Product:</label>
       <select class="form-control" id="product" name="product">
@@ -14,8 +15,7 @@
       <label for="quantity">Quantity: </label>
       <input type="number" step="1" min="1" class="form-control" id="quantity" name="quantity">
     </div>
-
-    
     <button type="submit" class="btn btn-primary mt-3">Add</button>
   </form>
+  <%- include('../order/orderTable'); %>
 <%- include('../includes/footer'); %>

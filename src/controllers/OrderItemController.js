@@ -2,6 +2,7 @@ const orderItemService = require("../services/OrderItemService");
 const orderService = require('../services/OrderService');
 const productService = require('../services/ProductService');
 const {handleUndefinedError, handleNotFoundTest} = require('./ControllerFunctions');
+const controller = require('./OrderController');
 const MyValidationError = require("../errors/MyValidationError");
 const NotFoundError = require("../errors/NotFoundError");
 const getCurrencyFormated = require("../util/getCurrencyFormated");
@@ -11,15 +12,18 @@ class OrderItemController {
   orderItem;
 
   getStore = async(req, res, next) => {
-    this.renderForm(res, next);
+    this.renderForm(req, res, next);
   }
 
-  renderForm = async(res, next, orderItem = {}) => {
+  renderForm = async(req, res, next, orderItem = {}) => {
     try {
+      const order = await orderService.findByIdWithAssociation(req.params.idOrder);
+      this.setOrderNumberFormat(order);
       const products = await productService.findAll();
       res.locals.title = 'Add Item';
       res.render('orderItem/orderItemForm', {
-        products
+        products,
+        order
       });
     }
     catch (e) {
@@ -45,7 +49,7 @@ class OrderItemController {
       console.log(this.orderItem);
       const newOrderItem = await orderItemService.save(this.orderItem);
       console.log(newOrderItem.toJSON());
-      res.redirect(`/orders/${newOrderItem.order_id}/items/${newOrderItem.product_id}`);
+      res.redirect(`/orders/${newOrderItem.order_id}`);
     }
     catch (e) {
       this.handleError(e, res, next);
@@ -76,6 +80,13 @@ class OrderItemController {
   setNumberFormat(orderItem) {
     orderItem.priceFormatted = getCurrencyFormated(orderItem.price);
     orderItem.subTotalFormatted = getCurrencyFormated(orderItem.subTotal);
+  }
+
+  setOrderNumberFormat = (order) => {
+    order.Products.forEach((product) => {
+      this.setNumberFormat(product.OrderItem);
+    });
+    order.totalFormatted = getCurrencyFormated(order.total);
   }
 
 }

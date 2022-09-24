@@ -49,6 +49,12 @@ module.exports = class Order extends Model {
           return StaticOrderService.getOrderUrlUpdatePage(this);
         }
       },
+      urlCreateItem: {
+        type: DataTypes.VIRTUAL,
+        get() {
+          return StaticOrderService.getOrderItemUrlCreatePage(this);
+        }
+      },
       dateFormatted: {
         type: DataTypes.VIRTUAL,
         get() {

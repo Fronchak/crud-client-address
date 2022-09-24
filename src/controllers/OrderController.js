@@ -50,7 +50,8 @@ class OrderController {
       this.order = {};
       this.updateOrderFromValuesFromReq(this.order, req);
       const newOrder = await orderService.save(this.order);
-      res.redirect(newOrder.urlPage);
+      console.log(newOrder.urlCreateItem);
+      res.redirect(newOrder.urlCreateItem);
     }
     catch (e) {
       this.handleError(e, res, next);
@@ -80,7 +81,7 @@ class OrderController {
       this.order = {};
       this.order = await orderService.findByIdWithAssociation(req.params.id);
       console.log(this.order.Products.length);
-      this.setNumberFormat(this.order);
+      this.setTotalNumberFormat(this.order);
       res.locals.title = 'Order Page';
       res.render('order/orderPage', {
         order: this.order
@@ -92,12 +93,15 @@ class OrderController {
     }
   }
 
-  setNumberFormat(order) {
+  printSomething() {
+    console.log('printSomething');
+  }
+
+  setTotalNumberFormat(order){
     order.Products.forEach((product) => {
       orderItemController.setNumberFormat(product.OrderItem);
     });
     order.totalFormatted = getCurrencyFormated(order.total);
-    console.log(order.totalFormatted);
   }
 
   getUpdate = async (req, res, next) => {

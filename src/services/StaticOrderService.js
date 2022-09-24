@@ -16,3 +16,7 @@ module.exports.getOrderUrlUpdatePage = (order) => {
 module.exports.getDateFormatted = (order) => {
   return order.date ? getDateFormatted(order.date) : '';
 }
+
+module.exports.getOrderItemUrlCreatePage = (order) => {
+  return `/orders/${order.id}/items/create`;
+}
