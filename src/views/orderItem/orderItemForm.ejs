@@ -17,8 +17,11 @@
       value=<%= orderItem.quantity %>>
     </div>
     <button type="submit" class="btn btn-primary mt-3">
-      <%= (orderItem ? 'Update' : 'Add' ) %>
+      <%= (orderItem.Product ? 'Update' : 'Add' ) %>
     </button>
   </form>
   <%- include('../order/orderTable'); %>
+  <button type="button" class="btn btn-primary mt-3">
+    <a class="nav-link active" aria-current="page" href=<%= order.urlPage %>>Finished</a>
+  </button>
 <%- include('../includes/footer'); %>

@@ -4,8 +4,7 @@ const Client = require('../models/ClientModel');
 class AddressService {
 
   save = async (address) => {
-    const createdAddress = await Address.create(address);
-    return createdAddress.id;
+    return await Address.create(address);
   }
 
   async findById(id) {

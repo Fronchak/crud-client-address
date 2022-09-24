@@ -1,4 +1,9 @@
 <%- include('../includes/fullHead'); %>
+
+  <h3><strong>Form: </strong>
+    <a href=<%= '/clients/create' %>>Add new Client</a>
+  </h3>
+  <hr>
  <% for(const clientObj of clients) { %>
   <h3><strong>Name: </strong>
     <a href=<%= clientObj.urlPage %>><%= clientObj.fullName %></a>

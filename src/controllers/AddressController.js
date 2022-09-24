@@ -44,15 +44,11 @@ class AddressController {
   store = async(req, res, next) => {
     let address;
     try {
-      const client = await clientService.findByIdWithAddress(req.body.client);
-      //if (!client) return this.handleClientNotFound(res, next);
       address = this.getAddressFromReq(req);
       const createdAddress = await addressService.save(address);
-      //res.redirect(createdAddress.urlPage);
-      res.json(createdAddress);
+      res.redirect(createdAddress.urlPage);
     }
     catch (e) {
-      console.log('error', e);
       let clients;
       try {
         clients = await clientService.findAll();
@@ -75,7 +71,6 @@ class AddressController {
 
   getAddressFromReq(req) {
     const body = req.body;
-    console.log('client', body.client);
     return {
       city: body.city,
       street: body.street,

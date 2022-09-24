@@ -1,4 +1,8 @@
 <%- include('../includes/fullHead'); %>
+  <h3><strong>Form: </strong>
+    <a href=<%= '/products/create' %>>Add new Product</a>
+  </h3>
+  <hr>
   <% for (const product of products) { %>
     <h3><strong>Product: </strong>
       <a href=<%= product.urlPage %>><%= product.name %></a>

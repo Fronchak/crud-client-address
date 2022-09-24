@@ -1,4 +1,8 @@
 <%- include('../includes/fullHead'); %>
+  <h3><strong>Form: </strong>
+    <a href=<%= '/categories/create' %>>Add new Category</a>
+  </h3>
+  <hr>
   <% for(const category of categories) { %>
     <h3><strong>Category: </strong>
       <a href=<%= category.urlPage %>><%= category.category %></a>
