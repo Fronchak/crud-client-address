@@ -48,6 +48,15 @@ class OrderItemService {
     return orderItem;
   }
 
+  findOne = async(idOrder, idProduct) => {
+    return await OrderItem.findOne({
+      where: {
+        order_id: idOrder,
+        product_id: idProduct
+      }
+    });
+  }
+
   setSubtotal(orderItem) {
     orderItem.subTotal = orderItem.price * orderItem.quantity;
   }

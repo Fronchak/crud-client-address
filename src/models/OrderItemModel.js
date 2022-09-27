@@ -32,10 +32,32 @@ module.exports = class OrderItem extends Model {
         }
       },
       price: {
-        type: DataTypes.FLOAT(7, 2)
+        type: DataTypes.FLOAT(7, 2),
+        defaultValue: 0,
+        allowNull: false,
+        validate: {
+          isNumeric: {
+            msg: 'Invalid price format'
+          },
+          min: {
+            args: 0.5,
+            msg: 'Price shoud be at least bigger than 0'
+          }
+        }
       },
       quantity: {
-        type: DataTypes.INTEGER
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+        validate: {
+          isInt: {
+            msg: 'Quantity shoud be a int number'
+          },
+          min: {
+            args: 1,
+            msg: 'Quantity cannot be lower than 1 unit'
+          }
+        }
       }
     }, {
       sequelize

@@ -13,6 +13,7 @@ class OrderController {
   index = async(req, res, next) => {
     try {
       const orders = await orderService.findAll();
+      orders.forEach((order) => setOrderFormat(order));
       res.locals.title = "Orders";
       res.render('order/orderList', {
         orders
@@ -65,6 +66,7 @@ class OrderController {
     if(e instanceof MyValidationError) {
       res.locals.errors = e.message.split(',');
       this.renderForm(res, next, this.order);
+      return;
     }
     else if (e instanceof NotFoundError) {
       handleNotFoundTest(e, res, next);

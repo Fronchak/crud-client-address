@@ -3,6 +3,7 @@
   <hr>
   <% for(const order of orders) { %>
     <h3><a href=<%= order.urlPage %>><%= `NF: ${order.id}` %></a></h3>
+    <h3><strong>Total: </strong><%= order.totalFormatted %></h3>
     <%- include('./orderStatus', {order}); %>
     <hr>
   <% } %>

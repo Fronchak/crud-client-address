@@ -49,7 +49,9 @@ class OrderService {
 
   setTotal(order) {
     let total = 0;
+    
     order.Products.forEach((product) => {
+      console.log(product.OrderItem.toJSON());
       total += product.OrderItem.subTotal;
     });
     order.total = total;
@@ -58,7 +60,19 @@ class OrderService {
   }
 
   findAll = async() => {
-    return await Order.findAll();
+    const orders = await Order.findAll({
+      include: {
+        model: Product,
+        through: { attributes: ['price', 'quantity'] }
+      }
+    });
+    orders.forEach((order) => {
+      order.Products.forEach((product) => {
+        orderItemService.setSubtotal(product.OrderItem);
+      })
+      this.setTotal(order);
+    });
+    return orders;
   }
 
   update = async(order) => {

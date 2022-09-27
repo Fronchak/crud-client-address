@@ -9,6 +9,7 @@ const {
 } = require('./ControllerFunctions');
 const MyValidationError = require("../errors/MyValidationError");
 const NotFoundError = require("../errors/NotFoundError");
+const OrderItemService = require("../services/OrderItemService");
 
 class OrderItemController {
 
@@ -38,17 +39,29 @@ class OrderItemController {
       });
     }
     catch (e) {
-      this.handleError(e, res, next);
+      this.handleError(e, req, res, next);
     }
   }
 
-  handleError = (e, res, next) => {
+  handleError = (e, req, res, next) => {
     console.log(e);
-    next(e);
+    if (e instanceof MyValidationError) {
+      res.locals.errors = e.message.split(',');
+      this.renderForm(req, res, next);
+      return;
+    }
+    else if (e instanceof NotFoundError) {
+      handleNotFoundTest(e, res, next);
+    }
+    handleUndefinedError(e, res, next);
   }
 
   store = async(req, res, next) => {
     try {
+      const orderItem = await OrderItemService.findOne(req.params.idOrder, req.body.product);
+      if (orderItem) {
+        throw new MyValidationError('There is another item with this product');
+      }
       const order = await orderService.findById(req.params.idOrder);
       const product = await productService.findById(req.body.product);
       this.orderItem = {};
@@ -60,7 +73,7 @@ class OrderItemController {
       res.redirect(order.urlCreateItem);
     }
     catch (e) {
-      this.handleError(e, res, next);
+      this.handleError(e, req, res, next);
     }
   }
 
@@ -80,7 +93,7 @@ class OrderItemController {
 
     }
     catch (e) {
-      this.handleError(e, res, next);
+      this.handleError(e, req, res, next);
     }
   }
 
@@ -106,7 +119,7 @@ class OrderItemController {
       this.renderForm(req, res, next, this.orderItem);
     }
     catch (e) {
-      this.handleError(e, res, next);
+      this.handleError(e, req, res, next);
     }
   }
 
@@ -126,7 +139,7 @@ class OrderItemController {
 
     }
     catch (e) {
-      this.handleError(e, res, next);
+      this.handleError(e, req, res, next);
     }
   }
 
